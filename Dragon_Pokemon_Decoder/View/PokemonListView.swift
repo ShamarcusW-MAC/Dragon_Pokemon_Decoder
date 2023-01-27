@@ -14,6 +14,11 @@ struct PokemonListView: View {
         .init(color: .black, location: 0.5),
     ]), startPoint: .top, endPoint: .bottom)
     
+    var detailGradient = LinearGradient(gradient: Gradient(stops: [
+        .init(color: .white, location: 0.0),
+        .init(color: .black, location: 1.0),
+    ]), startPoint: .top, endPoint: .bottom)
+    
     @ObservedObject var pvm: PokemonViewModel = PokemonViewModel()
 
     var body: some View {
@@ -37,27 +42,49 @@ struct PokemonListView: View {
                     .foregroundColor(Color("DragonColor"))
                     .textCase(.uppercase)
                 
-                ScrollView {
-                    ForEach(pokemonType.pokemon) { pokemon in
-                        GeometryReader { geometry in
-                            VStack {
-                                Spacer()
-                                HStack(alignment: .center) {
-                                    Text(pokemon.pokemon.name)
-                                        .frame(maxWidth: .infinity)
-                                        .textCase(.uppercase)
-                                        .fontWeight(.bold)
-                                        .background(gradient)
-                                        .foregroundColor(Color("DragonColor"))
-                                        .font(.system(size: 25.0))
-                                        .containerShape(Capsule())
+                NavigationStack {
+                    ScrollView {
+                        
+                        ForEach(pokemonType.pokemon) { pokemon in
+                            GeometryReader { geometry in
+                                VStack {
+                                    Spacer()
+                                    HStack(alignment: .center) {
+                                        
+                                        NavigationLink(pokemon.pokemon.name, value: pokemon)
+                                            .frame(maxWidth: .infinity)
+                                            .textCase(.uppercase)
+                                            .fontWeight(.bold)
+                                            .background(gradient)
+                                            .foregroundColor(Color("DragonColor"))
+                                            .font(.system(size: 25.0))
+                                            .containerShape(Capsule())
+                                    }.navigationDestination(for: Pokemon.self) { pokemon in
+                                        VStack(spacing: 20){
+                                            Text("\(pokemon.pokemon.name)")
+                                                .frame(maxWidth: .infinity)
+                                                .font(.system(size: 40.0))
+                                                .textCase(.uppercase)
+                                                .foregroundColor(Color("DragonColor"))
+                                            
+                                            Text("Generation \(pokemon.slot)")
+                                                .frame(maxWidth: .infinity)
+                                                .font(.system(size: 36.0))
+                                                .textCase(.uppercase)
+                                                .foregroundColor(Color("DragonColor"))
+                                        }
+                                        .background(detailGradient)
+
+                                    }
                                 }
                             }
+                            .padding()
                         }
-                        .padding()
+                        
+                        
                     }
+                    .background(Color("DarkDragonColor"))
                 }
-                .background(Color("DarkDragonColor"))
                 
             }
         }
@@ -70,6 +97,7 @@ struct PokemonListView: View {
                 }
             }
         }
+        
         
     }
     
